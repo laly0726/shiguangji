@@ -1,0 +1,6 @@
+# 本地密钥，绝不提交到仓库
+token.txt
+
+# 系统杂项
+Thumbs.db
+Desktop.ini
