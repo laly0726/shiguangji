@@ -9,8 +9,15 @@
 const fs = require('fs');
 const path = require('path');
 
-const NASA_KEY = 'fLF78jP68Pn7QtrhMN67L98pwqcj8LjRRzmFf98d'; // 个人 key（api.nasa.gov 注册）
+// NASA key 从本地文件读取，绝不写进代码（nasa-key.txt 已被 .gitignore 排除，绝不入库）
+// 文件缺失时自动降级为 DEMO_KEY
 const dir = __dirname;
+function readKey(file) {
+  try {
+    return fs.readFileSync(path.join(dir, file), 'utf8').trim();
+  } catch (e) { return ''; }
+}
+const NASA_KEY = readKey('nasa-key.txt') || 'DEMO_KEY';
 
 function cnDate() {
   const n = new Date();

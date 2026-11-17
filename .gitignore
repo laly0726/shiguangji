@@ -1,5 +1,6 @@
 # 本地密钥，绝不提交到仓库
 token.txt
+nasa-key.txt
 
 # 自动任务运行日志
 update-log.txt

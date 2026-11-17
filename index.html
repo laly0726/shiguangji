@@ -263,29 +263,8 @@ function nasaOffline(){
 if(DD.nasa){
   applyNasa(DD.nasa);
 }else{
-  // 在线获取（今天条目未发布时自动回退昨天）
-  (function(){
-    var KEY='fLF78jP68Pn7QtrhMN67L98pwqcj8LjRRzmFf98d'; // 个人 NASA key，与 update.js 一致
-    var yesterday=new Date(now.getTime()-86400000).toISOString().slice(0,10);
-    function tryDate(date){
-      return fetch('https://api.nasa.gov/planetary/apod?api_key='+KEY+(date?('&date='+date):''))
-        .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
-        .then(function(d){if(!d||d.media_type!=='image'||!d.url)throw new Error('no image');return d;});
-    }
-    tryDate(null)
-      .catch(function(){return tryDate(yesterday);})
-      .then(function(d){
-        if(d){
-          applyNasa({
-            title:d.title||'Astronomy Picture of the Day',
-            desc:d.explanation||'',
-            src:d.url,
-            meta:(d.date||dstr)+(d.copyright?(' · © '+d.copyright):' · NASA APOD')
-          });
-        }else{nasaOffline();}
-      })
-      .catch(nasaOffline);
-  })();
+  // data.js 缺失时回退本地藏品；NASA key 只保留在本地 update.js 中，不进入前端
+  nasaOffline();
 }
 
 function applyBing(b){
