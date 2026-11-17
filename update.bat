@@ -2,6 +2,8 @@
 setlocal
 cd /d %~dp0
 title Shiguangji Daily Update
+set AUTO=0
+if /i "%~1"=="auto" set AUTO=1
 
 set NODE=C:\Users\SROD\.workbuddy\binaries\node\versions\24.14.0\node.exe
 if not exist "%NODE%" set NODE=node
@@ -42,6 +44,7 @@ echo   Done! Live at:
 echo   https://laly0726.github.io/shiguangji/
 echo ============================================
 echo.
+if "%AUTO%"=="1" goto :end
 choice /c YN /m "Open the site in browser now"
 if errorlevel 2 goto :end
 start https://laly0726.github.io/shiguangji/
@@ -64,4 +67,5 @@ echo   [!] Update failed. Check the messages above.
 
 :end
 echo.
+if "%AUTO%"=="1" exit /b 0
 pause
