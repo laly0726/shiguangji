@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拾光集 · 每日双图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E8E2D6;            /* 页面暖纸底 */
+  --bg-alt:#F0EBE0;        /* 短句条浅纸底 */
+  --card:#FFFFFF;          /* 卡片白 */
+  --ink:#5C4A36;           /* 深咖啡墨色 */
+  --ink-2:#7A6857;         /* 次级文字 */
+  --ink-3:#8A7560;         /* 茶金点缀 / 标签 */
+  --line:#D4CCB5;          /* 发丝分隔线 */
+  --gold:#D4A574;          /* 短句竖线金 */
+  --serif:"Noto Serif SC",Georgia,"Songti SC",serif;
+  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg)}
+body{overflow-x:hidden}
+#scaler{overflow:hidden}
+#stage{width:1440px;transform-origin:top left}
+
+.page{width:1440px;background:var(--bg);display:flex;flex-direction:column}
+
+/* ─── 页眉 ─── */
+.header{display:flex;flex-direction:row;justify-content:space-between;align-items:center;padding:28px 120px}
+.brand{display:flex;flex-direction:row;align-items:center;gap:14px}
+.brand-name{font-family:var(--serif);font-weight:600;font-size:26px;color:var(--ink)}
+.brand-sub{font-family:var(--sans);font-weight:300;font-size:12px;color:var(--ink-3);letter-spacing:4px}
+.nav{display:flex;flex-direction:row;gap:36px}
+.nav a{font-family:var(--sans);font-weight:400;font-size:14px;color:var(--ink-2);text-decoration:none;transition:color .2s ease}
+.nav a.active,.nav a:hover{color:var(--ink)}
+.date{font-family:var(--sans);font-weight:300;font-size:12px;color:var(--ink-2);letter-spacing:1px}
+.rule{height:1px;background:var(--line);width:100%}
+
+/* ─── 今日双鉴 ─── */
+.duo{display:flex;flex-direction:column;gap:48px;padding:88px 120px}
+.duo-head{display:flex;flex-direction:row;justify-content:space-between;align-items:flex-end}
+.duo-head-group{display:flex;flex-direction:column;gap:12px}
+.duo-kicker{font-family:var(--sans);font-weight:500;font-size:12px;color:var(--ink-3);letter-spacing:3px}
+.duo-title{font-family:var(--serif);font-weight:600;font-size:44px;color:var(--ink)}
+.duo-date{font-family:var(--sans);font-weight:300;font-size:12px;color:var(--ink-3);letter-spacing:1px}
+.duo-row{display:flex;flex-direction:row;gap:48px}
+.duo-card{flex:1;min-width:0;background:var(--card);border-radius:4px;overflow:hidden;display:flex;flex-direction:column}
+.duo-img{width:100%;height:520px;overflow:hidden;background:var(--line);position:relative}
+.duo-img img{width:100%;height:100%;object-fit:cover;display:block}
+.duo-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--sans);font-weight:300;font-size:13px;color:var(--ink-3);letter-spacing:2px}
+.duo-caption{display:flex;flex-direction:column;gap:12px;padding:28px 32px 32px}
+.duo-tag{font-family:var(--sans);font-weight:400;font-size:11px;color:var(--ink-3);letter-spacing:2px}
+.duo-card-title{font-family:var(--serif);font-weight:600;font-size:24px;line-height:34px;color:var(--ink)}
+.duo-desc{font-family:var(--sans);font-weight:300;font-size:13px;line-height:24px;color:var(--ink-2)}
+.duo-desc.eng{font-family:Georgia,"Times New Roman",serif;font-style:italic;letter-spacing:.2px}
+.duo-meta{font-family:var(--sans);font-weight:300;font-size:11px;color:var(--ink-3);letter-spacing:1px}
+
+/* ─── 今日短句条 ─── */
+.strip{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:64px 120px;background:var(--bg-alt)}
+.strip-quote{font-family:var(--serif);font-weight:500;font-size:30px;line-height:46px;color:var(--ink);text-align:center}
+.strip-sub{font-family:var(--sans);font-weight:300;font-size:12px;color:var(--ink-3);letter-spacing:2px}
+
+/* ─── 往期回响 ─── */
+.archive{display:flex;flex-direction:column;gap:48px;padding:96px 120px}
+.archive-head{display:flex;flex-direction:row;justify-content:space-between;align-items:flex-end}
+.archive-head-group{display:flex;flex-direction:column;gap:12px}
+.archive-kicker{font-family:var(--sans);font-weight:500;font-size:12px;color:var(--ink-3);letter-spacing:3px}
+.archive-title{font-family:var(--serif);font-weight:600;font-size:40px;color:var(--ink)}
+.archive-more{font-family:var(--sans);font-weight:400;font-size:14px;color:var(--ink-3);text-decoration:none;transition:color .2s ease}
+.archive-more:hover{color:var(--ink)}
+.archive-row{display:flex;flex-direction:row;gap:24px}
+.card{background:var(--card);border-radius:4px;overflow:hidden;display:flex;flex-direction:column}
+.card.grow{flex:1;min-width:0}
+.card.fixed{width:460px;flex-shrink:0}
+.card-img{width:100%;height:380px;overflow:hidden;background:var(--line)}
+.card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.card:hover .card-img img{transform:scale(1.03)}
+.card-caption{display:flex;flex-direction:column;gap:10px;padding:24px 28px;background:var(--card)}
+.card-title{font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink)}
+.card-desc{font-family:var(--sans);font-weight:300;font-size:13px;line-height:22px;color:var(--ink-2)}
+.card-tag{font-family:var(--sans);font-weight:400;font-size:11px;color:var(--ink-3);letter-spacing:2px}
+
+/* ─── 页脚 ─── */
+.footer{display:flex;flex-direction:row;justify-content:space-between;align-items:center;padding:44px 120px}
+.footer-brand{font-family:var(--serif);font-weight:500;font-size:16px;color:var(--ink)}
+.footer-meta{font-family:var(--sans);font-weight:300;font-size:11px;color:var(--ink-3);letter-spacing:2px}
+</style>
+</head>
+<body>
+<div id="scaler">
+<div id="stage">
+<div class="page">
+
+  <!-- 页眉 -->
+  <header class="header">
+    <div class="brand">
+      <span class="brand-name">拾光集</span>
+      <span class="brand-sub">每日双图</span>
+    </div>
+    <nav class="nav">
+      <a href="#" class="active">今日</a>
+      <a href="#archive">往期</a>
+      <a href="#">关于</a>
+    </nav>
+    <span class="date" id="headerDate">—</span>
+  </header>
+  <div class="rule"></div>
+
+  <!-- 今日双鉴 -->
+  <section class="duo" id="today">
+    <div class="duo-head">
+      <div class="duo-head-group">
+        <span class="duo-kicker">TODAY · 来自两个世界的光</span>
+        <h1 class="duo-title">今日双鉴</h1>
+      </div>
+      <span class="duo-date" id="duoDate">—</span>
+    </div>
+    <div class="duo-row">
+      <article class="duo-card">
+        <div class="duo-img">
+          <img id="nasaImg" src="" alt="NASA 每日天文图" style="display:none">
+          <span class="duo-status" id="nasaStatus">正在取来今日的星光 …</span>
+        </div>
+        <div class="duo-caption">
+          <span class="duo-tag">宇宙 · COSMOS — NASA 每日天文图</span>
+          <h2 class="duo-card-title" id="nasaTitle">取图中</h2>
+          <p class="duo-desc eng" id="nasaDesc"></p>
+          <span class="duo-meta" id="nasaMeta"></span>
+        </div>
+      </article>
+      <article class="duo-card">
+        <div class="duo-img">
+          <img id="bingImg" src="" alt="Bing 每日一图" style="display:none">
+          <span class="duo-status" id="bingStatus">正在取来今日的人间 …</span>
+        </div>
+        <div class="duo-caption">
+          <span class="duo-tag">人间 · MUNDUS — Bing 每日一图</span>
+          <h2 class="duo-card-title" id="bingTitle">今日之窗</h2>
+          <p class="duo-desc" id="bingDesc"></p>
+          <span class="duo-meta" id="bingMeta"></span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 今日短句条 -->
+  <section class="strip">
+    <p class="strip-quote">「 一天的落日只有一枚，一天的温柔却可以有很多次。 」</p>
+    <span class="strip-sub">—— 拾光集 · 今日短句</span>
+  </section>
+
+  <!-- 往期回响 -->
+  <section class="archive" id="archive">
+    <div class="archive-head">
+      <div class="archive-head-group">
+        <span class="archive-kicker">ARCHIVE · 过往的三百二十期</span>
+        <h2 class="archive-title">往期回响</h2>
+      </div>
+      <a class="archive-more" href="#">查看全部往期 →</a>
+    </div>
+    <div class="archive-row">
+      <article class="card grow">
+        <div class="card-img"><img src="assets/images/3_33.jpeg" alt="巷口的旧茶馆"></div>
+        <div class="card-caption">
+          <h3 class="card-title">巷口的旧茶馆</h3>
+          <p class="card-desc">一壶茶，半个下午，和一整个旧时光。</p>
+          <span class="card-tag">人文 · 第 320 期</span>
+        </div>
+      </article>
+      <article class="card fixed">
+        <div class="card-img"><img src="assets/images/3_36.jpeg" alt="银河低语"></div>
+        <div class="card-caption">
+          <h3 class="card-title">银河低语</h3>
+          <p class="card-desc">星光走了千年，才抵达城市之外的眼底。</p>
+          <span class="card-tag">宇宙 · 第 319 期</span>
+        </div>
+      </article>
+    </div>
+    <div class="archive-row">
+      <article class="card fixed">
+        <div class="card-img"><img src="assets/images/3_46.jpeg" alt="雾未散尽"></div>
+        <div class="card-caption">
+          <h3 class="card-title">雾未散尽</h3>
+          <p class="card-desc">山径只露出三步远，其余的交给想象。</p>
+          <span class="card-tag">风景 · 第 318 期</span>
+        </div>
+      </article>
+      <article class="card grow">
+        <div class="card-img"><img src="assets/images/3_52.jpeg" alt="雨夜灯河"></div>
+        <div class="card-caption">
+          <h3 class="card-title">雨夜灯河</h3>
+          <p class="card-desc">路灯把湿漉漉的街道，铺成一条流动的河。</p>
+          <span class="card-tag">城市 · 第 317 期</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <div class="rule"></div>
+  <footer class="footer">
+    <span class="footer-brand">拾光集 — 每天为两张图片，留一个位置。</span>
+    <span class="footer-meta">宇宙取自 NASA · 人间取自 Bing · 数据每日更新</span>
+  </footer>
+
+</div>
+</div>
+</div>
+<script src="data.js"></script>
+<script>
+// 保留 1440px 原始画布，随窗口宽度整体等比缩放
+(function(){
+  var stage=document.getElementById('stage');
+  var scaler=document.getElementById('scaler');
+  function fit(){
+    var s=window.innerWidth/1440;
+    stage.style.transform='scale('+s+')';
+    scaler.style.height=stage.getBoundingClientRect().height+'px';
+  }
+  window.addEventListener('resize',fit);
+  fit();
+})();
+
+// ─── 今日日期（页眉 + 双鉴区自动更新） ───
+var now=new Date();
+var dstr=now.getFullYear()+'.'+String(now.getMonth()+1).padStart(2,'0')+'.'+String(now.getDate()).padStart(2,'0');
+var week=['日','一','二','三','四','五','六'][now.getDay()];
+document.getElementById('duoDate').textContent=dstr+' · 星期'+week;
+document.getElementById('headerDate').textContent=dstr+' · 星期'+week;
+
+// ─── 图片加载器：多级来源 + 兜底 ───
+function loadImg(imgId,statusId,sources){
+  var im=document.getElementById(imgId),st=document.getElementById(statusId),i=0;
+  im.onload=function(){im.style.display='block';st.style.display='none';};
+  im.onerror=function(){
+    i++;
+    if(i<sources.length){im.src=sources[i];}
+    else{st.textContent='今日的光暂时取不到，明天再来。';}
+  };
+  im.src=sources[0];
+}
+
+// ─── 数据优先级：data.js（update.js 生成）→ 在线接口 → 本地藏品 ───
+var DD=window.DAILY_DATA||{};
+var nasaTitle=document.getElementById('nasaTitle');
+
+function applyNasa(n){
+  nasaTitle.textContent=n.title;
+  document.getElementById('nasaDesc').textContent=n.desc;
+  document.getElementById('nasaMeta').textContent=n.meta;
+  loadImg('nasaImg','nasaStatus',[n.src]);
+}
+function nasaOffline(){
+  nasaTitle.textContent='离线藏品 · 银河低语';
+  document.getElementById('nasaDesc').textContent='The network is quiet tonight — an old plate from the archive will keep you company until the stars return.';
+  document.getElementById('nasaMeta').textContent='本馆藏品 · 第 319 期';
+  loadImg('nasaImg','nasaStatus',['assets/images/3_36.jpeg']);
+}
+
+if(DD.nasa){
+  applyNasa(DD.nasa);
+}else{
+  // 在线获取（今天条目未发布时自动回退昨天）
+  (function(){
+    var KEY='fLF78jP68Pn7QtrhMN67L98pwqcj8LjRRzmFf98d'; // 个人 NASA key，与 update.js 一致
+    var yesterday=new Date(now.getTime()-86400000).toISOString().slice(0,10);
+    function tryDate(date){
+      return fetch('https://api.nasa.gov/planetary/apod?api_key='+KEY+(date?('&date='+date):''))
+        .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
+        .then(function(d){if(!d||d.media_type!=='image'||!d.url)throw new Error('no image');return d;});
+    }
+    tryDate(null)
+      .catch(function(){return tryDate(yesterday);})
+      .then(function(d){
+        if(d){
+          applyNasa({
+            title:d.title||'Astronomy Picture of the Day',
+            desc:d.explanation||'',
+            src:d.url,
+            meta:(d.date||dstr)+(d.copyright?(' · © '+d.copyright):' · NASA APOD')
+          });
+        }else{nasaOffline();}
+      })
+      .catch(nasaOffline);
+  })();
+}
+
+function applyBing(b){
+  document.getElementById('bingTitle').textContent=b.title;
+  document.getElementById('bingDesc').textContent=b.desc;
+  document.getElementById('bingMeta').textContent=b.meta;
+  loadImg('bingImg','bingStatus',[b.src]);
+}
+function bingFallback(){
+  document.getElementById('bingDesc').textContent=bingPoems[now.getDay()];
+  document.getElementById('bingMeta').textContent=dstr+' · bing.com 每日壁纸';
+  loadImg('bingImg','bingStatus',['https://bing.img.run/1920x1080.php','assets/images/3_13.jpeg']);
+}
+// Bing 每日一图（人间）：文案由本地文艺短句池按星期轮换
+var bingPoems=[
+  '今天的窗，开在世界的那一边。',
+  '有人替你在远方按下了快门。',
+  '太阳照常升起，镜头也照常醒来。',
+  '世界每天换一帧，温柔的人每天看一次。',
+  '这张图走过很远的路，只为落在你眼前。',
+  '人间的一日，被谁轻轻收进了相纸。',
+  '周末的光，可以走得慢一些。'
+];
+
+if(DD.bing){
+  applyBing(DD.bing);
+}else{
+  // 直连 Bing 官方元数据（http 环境可用；file:// 下会因跨域走兜底）
+  fetch('https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1')
+    .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json();})
+    .then(function(d){
+      var im=d.images&&d.images[0];
+      if(!im)throw new Error('empty');
+      applyBing({
+        title:im.title||'今日之窗',
+        desc:im.copyright||bingPoems[now.getDay()],
+        src:'https://cn.bing.com'+im.url,
+        meta:dstr+' · bing.com 每日壁纸'
+      });
+    })
+    .catch(bingFallback);
+}
+</script>
+</body>
+</html>
