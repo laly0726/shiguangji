@@ -1,6 +1,6 @@
 // 由 update.js 自动生成，请勿手改
 window.DAILY_DATA = {
-  "generated": "2026-11-17T07:18:06.438Z",
+  "generated": "2026-11-17T08:46:20.424Z",
   "date": "2026.11.17",
   "nasa": {
     "title": "Milky Way versus Aurora",
