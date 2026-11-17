@@ -31,12 +31,16 @@ echo.
 echo [3/3] Pushing to GitHub Pages...
 
 if not exist token.txt goto :notoken
-set /p GTOKEN=<token.txt
+for /f "usebackq delims=" %%a in ("token.txt") do set "GTOKEN=%%a"
 echo %GTOKEN%| findstr /b "ghp_ github_" >nul
 if errorlevel 1 goto :notoken
 
 git push https://%GTOKEN%@github.com/laly0726/shiguangji.git main
-if errorlevel 1 goto :fail
+if errorlevel 1 (
+    echo     git push unreachable, trying API fallback...
+    "%NODE%" push-api.js data.js
+    if errorlevel 1 goto :fail
+)
 
 echo.
 echo ============================================
