@@ -94,6 +94,31 @@ body{background:#100D0A;font-family:var(--sans);overflow:hidden}
   font-size:26px;cursor:pointer;transition:color .25s;line-height:1;font-weight:300}
 .archive-close:hover{color:#fff}
 
+/* ─── 灯箱预览（点击图片打开，可保存） ─── */
+.lightbox{position:fixed;inset:0;z-index:40;background:rgba(8,6,4,.94);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s}
+.lightbox.open{opacity:1;visibility:visible}
+.lightbox img{max-width:92vw;max-height:86vh;object-fit:contain;border-radius:2px;
+  box-shadow:0 24px 80px rgba(0,0,0,.55);transform:scale(.96);transition:transform .35s ease}
+.lightbox.open img{transform:scale(1)}
+.lightbox .lb-bar{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;
+  padding:20px 34px;background:linear-gradient(to bottom,rgba(8,6,4,.75),rgba(8,6,4,0))}
+.lb-title{font-family:var(--serif);font-weight:500;font-size:16px;letter-spacing:1px;
+  color:rgba(255,252,245,.9);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-close{color:rgba(255,252,245,.8);font-size:26px;cursor:pointer;line-height:1;
+  font-weight:300;margin-left:22px;transition:color .25s}
+.lb-close:hover{color:#fff}
+.lb-save{margin-left:22px;padding:8px 22px;border-radius:20px;cursor:pointer;
+  border:1px solid var(--gold);background:transparent;color:var(--gold);
+  font-family:var(--sans);font-size:13px;letter-spacing:2px;font-weight:400;
+  transition:background .25s,color .25s;white-space:nowrap}
+.lb-save:hover{background:var(--gold);color:#1a140e}
+.lb-hint{position:fixed;bottom:22px;left:0;right:0;text-align:center;
+  font-size:11px;letter-spacing:2px;font-weight:300;color:rgba(232,226,214,.4);pointer-events:none}
+.stage img.show{cursor:zoom-in}
+.card .ph{cursor:zoom-in}
+
 @media (max-width:760px){
   .top{padding:20px 24px}
   .caption{padding:90px 26px 46px}
@@ -139,6 +164,17 @@ body{background:#100D0A;font-family:var(--sans);overflow:hidden}
   </div>
 </div>
 
+<!-- 灯箱预览：点击图片打开 -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-bar">
+    <span class="lb-title" id="lbTitle"></span>
+    <button class="lb-save" id="lbSave">保存图片</button>
+    <span class="lb-close" id="lbClose" title="关闭">×</span>
+  </div>
+  <img id="lbImg" alt="预览大图">
+  <div class="lb-hint">点击空白处或按 Esc 关闭</div>
+</div>
+
 <script src="data.js"></script>
 <script>
 /* ─── 日期 ─── */
@@ -151,8 +187,37 @@ document.getElementById('dateText').textContent=DD.date||dstr;
 function loadImage(img,sources){
   var i=0;
   img.onerror=function(){i++;if(i<sources.length){img.src=sources[i];}};
+  img.onload=function(){img.dataset.resolved=img.src};
   img.src=sources[0];
 }
+
+/* ─── 灯箱预览与保存 ─── */
+var lb=document.getElementById('lightbox'),lbImg=document.getElementById('lbImg'),lbTitle=document.getElementById('lbTitle');
+function openLightbox(src,title){
+  lbImg.src=src;lbTitle.textContent=title||'';
+  lb.classList.add('open');
+}
+function closeLightbox(){lb.classList.remove('open')}
+function currentSrcOf(img){return img.dataset.resolved||img.src}
+function saveCurrent(){
+  var src=lbImg.src;if(!src)return;
+  var name=(lbTitle.textContent||'shiguangji').replace(/[\\/:*?"<>|]/g,'_').slice(0,60)+'.jpg';
+  fetch(src).then(function(r){if(!r.ok)throw 0;return r.blob()})
+    .then(function(b){
+      var u=URL.createObjectURL(b),a=document.createElement('a');
+      a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
+      setTimeout(function(){URL.revokeObjectURL(u)},4000);
+    })
+    .catch(function(){
+      /* 跨域拿不到 blob 时，新开标签页手动右键保存 */
+      window.open(src,'_blank');
+    });
+}
+lbImg.addEventListener('click',function(e){e.stopPropagation()});
+document.getElementById('lbClose').onclick=closeLightbox;
+document.getElementById('lbSave').onclick=saveCurrent;
+lb.addEventListener('click',closeLightbox);
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lb.classList.contains('open'))closeLightbox()});
 
 /* ─── 今日轮播：图文一体，断网回退本地藏品 ─── */
 var slides=[];
@@ -173,9 +238,10 @@ if(!slides.length){
 
 var stage=document.getElementById('stage');
 var imgs=[];
-slides.forEach(function(s){
+slides.forEach(function(s,idx){
   var im=document.createElement('img');
   loadImage(im,s.sources);
+  im.addEventListener('click',function(){openLightbox(currentSrcOf(im),s.title)});
   stage.insertBefore(im,document.getElementById('caption'));
   imgs.push(im);
 });
@@ -223,7 +289,9 @@ var grid=document.getElementById('grid');
 past.forEach(function(p){
   var c=document.createElement('div');c.className='card';
   c.innerHTML='<img class="ph" alt="'+p.title+'"><h3>'+p.title+'</h3><p>'+p.desc+'</p><span class="tag">'+p.tag+'</span>';
-  loadImage(c.querySelector('.ph'),[p.img]);
+  var ph=c.querySelector('.ph');
+  loadImage(ph,[p.img]);
+  ph.addEventListener('click',function(){openLightbox(currentSrcOf(ph),p.title+' · '+p.tag)});
   grid.appendChild(c);
 });
 
