@@ -1,17 +1,12 @@
 // 由 update.js 自动生成，请勿手改
 window.DAILY_DATA = {
-  "generated": "2026-11-18T03:11:53.387Z",
-  "date": "2026.11.18",
-  "nasa": {
-    "title": "Milky Way versus Aurora",
-    "desc": "Are these two giant arches battling for control of the sky? No, but it sure looks like it! The arch on the left is the central band of our Milky Way Galaxy, an ancient system of stars, gas, and dust that predates our Earth and is very far away. The arch on the right, by contrast, is an auroral ribbon that is only hours old, composed of energized atoms and molecules, and is close by -- right in Earth's upper atmosphere. These chance-superposed titans have our Sun in common, a stellar member of the Milky Way that ejects energetic particles which create auroras. Far behind the middle of the auroral arch is the Big Dipper. Even farther in the distance is the Andromeda galaxy -- the bright spot near the top of the frame, just left of center. The featured image was taken about a month ago from Kvaløya in northern Norway.",
-    "src": "assets/nasa-today.jpg",
-    "meta": "2026.11.18 · NASA APOD"
-  },
+  "generated": "2026-11-19T01:41:14.442Z",
+  "date": "2026.11.19",
+  "nasa": null,
   "bing": {
-    "title": "从黄昏狩猎到黎明",
-    "desc": "一对仓鸮 (© Zahoor Salmi/Getty Images)",
+    "title": "思想在此成形",
+    "desc": "雕塑《知识之躯》，由豪梅·普兰萨创作，位于德国法兰克福的法兰克福歌德大学 (© Todamo/Shutterstock)",
     "src": "assets/bing-today.jpg",
-    "meta": "2026.11.18 · bing.com 每日壁纸"
+    "meta": "2026.11.19 · bing.com 每日壁纸"
   }
 };
